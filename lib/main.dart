@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_admin_panel/screens/main_screen.dart';
 import 'package:provider/provider.dart';
@@ -32,34 +33,66 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
+  final Future<FirebaseApp> _firebaseInitialization = Firebase.initializeApp(
+      options: const FirebaseOptions(
+          apiKey: "AIzaSyDX7mrL5Zz-ZU4E6MHpDIBEXs8zwapUz1o",
+          authDomain: "groceryappproject-3973a.firebaseapp.com",
+          projectId: "groceryappproject-3973a",
+          storageBucket: "groceryappproject-3973a.appspot.com",
+          messagingSenderId: "248529812663",
+          appId: "1:248529812663:web:c0663191b09623cb1a6132",
+          measurementId: "G-CW6CP3G6S0"));
+
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => Mc.MenuController(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) {
-            return themeChangeProvider;
-          },
-        ),
-      ],
-      child: Consumer<DarkThemeProvider>(
-        builder: (context, themeProvider, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Grocery',
-            theme: Styles.themeData(themeProvider.getDarkTheme, context),
-            home: const MainScreen(),
-            routes: {
-              UploadProductForm.routeName: (context) {
-                return const UploadProductForm();
-              },
-            },
+    return FutureBuilder(
+      future: _firebaseInitialization,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
           );
-        },
-      ),
+        } else if (snapshot.hasError) {
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: Text(snapshot.error.toString()),
+              ),
+            ),
+          );
+        }
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => Mc.MenuController(),
+            ),
+            ChangeNotifierProvider(
+              create: (_) {
+                return themeChangeProvider;
+              },
+            ),
+          ],
+          child: Consumer<DarkThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Grocery',
+                theme: Styles.themeData(themeProvider.getDarkTheme, context),
+                home: const MainScreen(),
+                routes: {
+                  UploadProductForm.routeName: (context) {
+                    return const UploadProductForm();
+                  },
+                },
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

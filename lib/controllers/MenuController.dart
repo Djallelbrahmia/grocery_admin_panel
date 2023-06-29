@@ -54,4 +54,10 @@ class MenuController extends ChangeNotifier {
       _editProductScaffoldKey.currentState!.openDrawer();
     }
   }
+
+  void controlAllOrder() {
+    if (!_ordersScaffoldKey.currentState!.isDrawerOpen) {
+      _ordersScaffoldKey.currentState!.openDrawer();
+    }
+  }
 }

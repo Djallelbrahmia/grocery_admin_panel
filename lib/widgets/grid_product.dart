@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_admin_panel/services/utils.dart';
+import 'package:grocery_admin_panel/widgets/text_widget.dart';
 
 import '../consts/constants.dart';
 import 'products_widget.dart';
@@ -15,18 +18,43 @@ class ProductGridWidget extends StatelessWidget {
   final bool isInMain;
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: isInMain ? 4 : 20,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          childAspectRatio: childAspectRatio,
-          crossAxisSpacing: defaultPadding,
-          mainAxisSpacing: defaultPadding,
-        ),
-        itemBuilder: (context, index) {
-          return ProductWidget();
+    final Color color = Utils(context).color;
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection("products").snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.data!.docs.isNotEmpty) {
+              return GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: isInMain && snapshot.data!.docs.length > 4
+                      ? 4
+                      : snapshot.data!.docs.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: childAspectRatio,
+                    crossAxisSpacing: defaultPadding,
+                    mainAxisSpacing: defaultPadding,
+                  ),
+                  itemBuilder: (context, index) {
+                    return ProductWidget(
+                      id: snapshot.data!.docs[index]["id"],
+                    );
+                  });
+            } else {
+              return Center(
+                  child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: TextWidget(text: "Your Store is Empty", color: color),
+              ));
+            }
+          } else {
+            return Center(
+                child: TextWidget(
+                    text: "Something went wrong", color: Colors.red));
+          }
         });
   }
 }

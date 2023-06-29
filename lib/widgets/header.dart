@@ -7,13 +7,13 @@ import '../responsive.dart';
 class Header extends StatelessWidget {
   const Header({
     Key? key,
-    this.showText = true,
+    this.showTexField = true,
     required this.title,
     required this.fct,
   }) : super(key: key);
   final String title;
   final Function fct;
-  final bool showText;
+  final bool showTexField;
   @override
   Widget build(BuildContext context) {
     final theme = Utils(context).getTheme;
@@ -38,7 +38,7 @@ class Header extends StatelessWidget {
           ),
         if (Responsive.isDesktop(context))
           Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
-        !showText
+        !showTexField
             ? Container()
             : Expanded(
                 child: TextField(
