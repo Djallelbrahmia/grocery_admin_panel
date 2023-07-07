@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_admin_panel/services/utils.dart';
 import 'package:grocery_admin_panel/widgets/header.dart';
@@ -9,6 +10,7 @@ import '../responsive.dart';
 import '../screens/dashboard_screen.dart';
 import '../widgets/grid_product.dart';
 import '../widgets/side_menu.dart';
+import '../widgets/text_widget.dart';
 
 class AllOrdersScreen extends StatefulWidget {
   const AllOrdersScreen({Key? key}) : super(key: key);
@@ -52,9 +54,10 @@ class _AllOrdersScreenState extends State<AllOrdersScreen> {
                       height: 24,
                     ),
                     const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: OrdersList(),
-                    )
+                        padding: const EdgeInsets.all(8.0),
+                        child: OrdersList(
+                          isInDashboard: false,
+                        ))
                   ],
                 ),
               ),
